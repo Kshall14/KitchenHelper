@@ -27,7 +27,11 @@ export type RecipeScreenState = {
   loading: boolean;
   error: string | null;
 };
-
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+}
 // Navigation-related types
 export type RootStackParamList = {
   MainMenu: undefined;

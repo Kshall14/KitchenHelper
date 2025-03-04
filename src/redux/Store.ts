@@ -6,7 +6,7 @@ import savedRecipesReducer from './slices/savedRecipesSlice';
 import recipesReducer from './slices/recipeSlice';
 import recipeInfoReducer from './slices/recipeInfoSlice';
 import randomRecipesReducer from './slices/randomRecipeSlice';
-
+import userReducer from './slices/userSlice';
 // Create the saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
@@ -17,6 +17,7 @@ export const store = configureStore({
     recipes: recipesReducer,
     recipeInfo: recipeInfoReducer, 
     randomRecipes: randomRecipesReducer, 
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware), 

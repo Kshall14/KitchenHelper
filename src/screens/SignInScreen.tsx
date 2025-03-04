@@ -1,9 +1,9 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Alert, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { RootStackParamList } from '../components/Types';
-import auth from '@react-native-firebase/auth';
+import { useDispatch } from 'react-redux';
+import { signInRequest } from '../redux/slices/userSlice'; // Import the signInRequest action
 import ImageBackground3 from '../components/ImageBackground3';
 
 type MainMenuScreenProps = {
@@ -13,21 +13,14 @@ type MainMenuScreenProps = {
 const MainMenuScreenTs: React.FC<MainMenuScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const dispatch = useDispatch(); // Initialize the dispatch function
 
-  const handleSignIn = async () => {
-    try {
-      const userCredential = await auth().signInWithEmailAndPassword(email, password);
-      Alert.alert('Success', 'You have successfully signed in!');
-      navigation.navigate('MainMenu'); // Navigate to the main menu after successful sign-in
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error signing in:', error.message);
-        Alert.alert('Error', error.message);
-      } else {
-        console.error('An unknown error occurred:', error);
-        Alert.alert('Error', 'An unknown error occurred.');
-      }
-    }
+  const handleSignIn = () => {
+    // Dispatch the signInRequest action with email and password
+    dispatch(signInRequest({ email, password }));
+
+    // Navigate to the MainMenu after successful sign-in (handled in the saga)
+    // Note: The navigation logic will be handled in the saga after successful authentication
   };
 
   return (

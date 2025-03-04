@@ -20,7 +20,23 @@ export const findRecipesByIngredients = async (ingredients, number = 15) => {
       throw error;
     }
   };
-
+  export const findRecipesByOnlyIngredients = async (ingredients, number = 15) => {
+    try {
+      const url = `${BASE_URL}/complexSearch?includeIngredients=${ingredients}&number=${number}&apiKey=${APIKey}`;
+      const response = await fetch(url);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log('API Response Data (Only Ingredients):', JSON.stringify(data, null, 2));
+      return data.results; // Assuming the API returns results in a "results" property
+    } catch (error) {
+      console.error('Error fetching recipes by only ingredients:', error);
+      throw error;
+    }
+  };
   export const getRecipeInformation = async (id) => {
     try {
       const url = `${BASE_URL}/${id}/information?apiKey=${APIKey}`;
@@ -38,7 +54,7 @@ export const findRecipesByIngredients = async (ingredients, number = 15) => {
       throw error;
     }
   };
-  export const getRandomRecipe = async (number = 3) => {
+  export const getRandomRecipe = async (number = 6) => {
     try {
       const url = `${BASE_URL}/random?apiKey=${APIKey}&number=${number}`;
       const response = await fetch(url);

@@ -1,4 +1,8 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
-  
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "experimentalDecorators": true, // Enable decorators
+    "emitDecoratorMetadata": true,  // Optional but recommended
+    // Other options...
+  }
 }

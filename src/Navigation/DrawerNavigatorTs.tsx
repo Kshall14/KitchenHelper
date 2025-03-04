@@ -1,28 +1,3 @@
-// import React from 'react';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
-// import { RootStackParamList } from '../components/Types';
-// import MainMenuScreenTs from '../screens/MainMenuScreenTs';
-// import FindRecipeScreenTs from '../screens/FindRecipeScreenTs';
-// import MealCalenderScreenTs from '../screens/MealCalenderScreenTs';
-// import SavedRecipeScreenTs from '../screens/SavedRecipeTs';
-// import ShoppingListScreenTs from '../screens/ShoppingListTs';
-// import UploadRecipeScreenTs from '../screens/UploadRecipeScreenTs';
-
-// const Drawer = createDrawerNavigator<RootStackParamList>();
-
-// const DrawerNavigatorTs: React.FC = () => {
-//   return (
-//     <Drawer.Navigator initialRouteName="MainMenu">
-//       <Drawer.Screen name="MainMenu" component={MainMenuScreenTs} />
-//       <Drawer.Screen name="FindRecipe" component={FindRecipeScreenTs} />
-//       <Drawer.Screen name="MealCalender" component={MealCalenderScreenTs} />
-//       <Drawer.Screen name="SavedRecipe" component={SavedRecipeScreenTs} />
-//       <Drawer.Screen name="ShoppingList" component={ShoppingListScreenTs} />
-//       <Drawer.Screen name="UploadRecipe" component={UploadRecipeScreenTs} />
-//     </Drawer.Navigator>
-//   );
-// };
-
 import React from 'react';
 import {
   createDrawerNavigator,
