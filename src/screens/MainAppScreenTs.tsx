@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// src/screens/RandomRecipesScreenTs.tsx
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,80 +9,35 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { getRandomRecipe } from '../api/ApiHandler';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../components/Types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import ImageBackground2 from '../components/ImageBackground2';
-
-type RandomRecipe = {
-  id: number;
-  title: string;
-  image: string;
-  readyInMinutes: number;
-};
+import { fetchRandomRecipesRequest } from '../redux/slices/randomRecipeSlice';
+import { RootState } from '../redux/store';
 
 const RandomRecipesScreenTs: React.FC = () => {
-  const [randomRecipes, setRandomRecipes] = useState<RandomRecipe[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const dispatch = useDispatch();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Recipe'>>();
 
+  // Access Redux state
+  const { randomRecipes, loading, error } = useSelector((state: RootState) => state.randomRecipes);
+
   useEffect(() => {
-    // Temporarily comment out the API call
-    /*
-    const fetchRandomRecipes = async () => {
-      try {
-        const recipes: RandomRecipe[] = [];
-        for (let i = 0; i < 3; i++) {
-          const data = await getRandomRecipe();
-          if (data.recipes && data.recipes.length > 0) {
-            recipes.push(data.recipes[0]);
-          }
-        }
-        setRandomRecipes(recipes);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An unknown error occurred');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchRandomRecipes();
-    */
-  
-    // Use mock data for now
-    const mockRecipes: RandomRecipe[] = [
-      {
-        id: 1,
-        title: 'Mock Recipe 1',
-        image: 'https://spoonacular.com/recipeImages/1-312x231.jpg',
-        readyInMinutes: 30,
-      },
-      {
-        id: 2,
-        title: 'Mock Recipe 2',
-        image: 'https://spoonacular.com/recipeImages/2-312x231.jpg',
-        readyInMinutes: 45,
-      },
-      {
-        id: 3,
-        title: 'Mock Recipe 3',
-        image: 'https://spoonacular.com/recipeImages/3-312x231.jpg',
-        readyInMinutes: 60,
-      },
-    ];
-    setRandomRecipes(mockRecipes);
-    setLoading(false);
+    dispatch(fetchRandomRecipesRequest()); // Fetch random recipes on component mount
   }, []);
 
   const handleViewRecipe = (recipeId: number) => {
     navigation.navigate('Recipe', { recipeId });
+  };
+
+  const handleGoToSavedRecipes = () => {
+    navigation.navigate('SavedRecipe');
+  };
+
+  const handleFindNewRecipe = () => {
+    navigation.navigate('FindRecipe');
   };
 
   if (loading) {
@@ -100,10 +56,18 @@ const RandomRecipesScreenTs: React.FC = () => {
     );
   }
 
+  if (!Array.isArray(randomRecipes)) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>No recipes found.</Text>
+      </View>
+    );
+  }
+
   return (
     <ImageBackground2>
       <ScrollView style={styles.scrollContainer}>
-        <Text style={styles.title}>Random Recipes</Text>
+        <Text style={styles.title}>Check out these recipes!</Text>
         <View style={styles.recipeList}>
           {randomRecipes.map((recipe) => (
             <View key={recipe.id} style={styles.recipeCard}>
@@ -125,10 +89,19 @@ const RandomRecipesScreenTs: React.FC = () => {
           ))}
         </View>
       </ScrollView>
+      <View style={styles.bottomButtonsContainer}>
+        <TouchableOpacity style={styles.bottomButton} onPress={handleGoToSavedRecipes}>
+          <Text style={styles.bottomButtonText}>Go to Saved Recipes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.bottomButton} onPress={handleFindNewRecipe}>
+          <Text style={styles.bottomButtonText}>Find a New Recipe</Text>
+        </TouchableOpacity>
+      </View>
     </ImageBackground2>
   );
 };
 
+// Styles remain the same as before
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -200,6 +173,25 @@ const styles = StyleSheet.create({
     color: 'red',
     marginTop: 16,
     textAlign: 'center',
+  },
+  bottomButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+  },
+  bottomButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  bottomButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

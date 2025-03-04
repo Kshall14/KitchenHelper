@@ -38,20 +38,20 @@ export const findRecipesByIngredients = async (ingredients, number = 15) => {
       throw error;
     }
   };
-  export const getRandomRecipe = async () => {
+  export const getRandomRecipe = async (number = 3) => {
     try {
-        const url = `${BASE_URL}/random?apiKey=${APIKey}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('Random Recipe:', JSON.stringify(data, null, 2));
-        return data;
+      const url = `${BASE_URL}/random?apiKey=${APIKey}&number=${number}`;
+      const response = await fetch(url);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log('Random Recipe:', JSON.stringify(data, null, 2));
+      return data;
     } catch (error) {
-        console.error('Error fetching random recipe:', error);
-        throw error;
+      console.error('Error fetching random recipe:', error);
+      throw error;
     }
-};
+  };

@@ -9,9 +9,6 @@ import ImageBackground3 from '../components/ImageBackground3';
 type MainMenuScreenProps = {
   navigation: DrawerNavigationProp<RootStackParamList, 'MainMenu'>;
 };
-if (!firebase.apps.length) {
-  firebase.initializeApp();
-}
 const MainMenuScreenTs: React.FC<MainMenuScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

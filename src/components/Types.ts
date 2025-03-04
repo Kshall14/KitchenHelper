@@ -15,7 +15,12 @@ export interface SavedRecipe {
   readyInMinutes: number;
   analyzedInstructions?: { steps: { number: number; step: string }[] }[];
 }
-
+export interface RandomRecipe {
+  id: number;
+  title: string;
+  image: string;
+  readyInMinutes: number;
+}
 export type RecipeScreenState = {
   ingredients: string[];
   recipes: Recipe[];
