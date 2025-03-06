@@ -7,6 +7,7 @@ import recipesReducer from './slices/recipeSlice';
 import recipeInfoReducer from './slices/recipeInfoSlice';
 import randomRecipesReducer from './slices/randomRecipeSlice';
 import userReducer from './slices/userSlice';
+import watermelonDBReducer from './slices/waterMelonDBSlice'
 // Create the saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
@@ -14,6 +15,7 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     savedRecipes: savedRecipesReducer,
+    watermelonDB: watermelonDBReducer,
     recipes: recipesReducer,
     recipeInfo: recipeInfoReducer, 
     randomRecipes: randomRecipesReducer, 

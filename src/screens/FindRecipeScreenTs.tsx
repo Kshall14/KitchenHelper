@@ -8,7 +8,6 @@ import {
   Image,
   ActivityIndicator,
   TouchableOpacity,
-  
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
@@ -17,10 +16,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import ImageBackground2 from '../components/ImageBackground2';
 import {
   fetchRecipesByIngredientsRequest,
-  fetchRecipesByOnlyIngredientsRequest, // Import the new action
+  fetchRecipesByOnlyIngredientsRequest,
 } from '../redux/slices/recipeSlice';
 import { RootState } from '../redux/store';
-import { Recipe } from '../components/Types';
+import { Recipe, SavedRecipe } from '../components/Types';
+import { getRecipeInformation } from '../api/ApiHandler'; // Import the API helper
 
 const FindRecipeScreenTs: React.FC = () => {
   const [ingredients, setIngredients] = useState<string[]>(['']);
@@ -62,8 +62,28 @@ const FindRecipeScreenTs: React.FC = () => {
     dispatch(fetchRecipesByOnlyIngredientsRequest(ingredientsString)); // Dispatch the new action
   };
 
-  const handleViewRecipe = (recipeId: number) => {
-    navigation.navigate('Recipe', { recipeId });
+  const handleViewRecipe = async (recipeId: number, recipe: Recipe) => {
+    try {
+      // Fetch full recipe details using the API helper
+      const recipeDetails = await getRecipeInformation(recipeId);
+      //console.log('Recipe details from API:', recipeDetails);
+      // Transform the Recipe object into a SavedRecipe object
+      const savedRecipe: SavedRecipe = {
+        spoonacularId: recipeDetails.id, // Use the ID from the detailed response
+        title: recipeDetails.title,
+        //ingredients: JSON.stringify(recipeDetails.extendedIngredients || []), // Use actual ingredients
+        ingredients: recipeDetails.extendedIngredients || [],
+        //instructions: JSON.stringify(recipeDetails.instructions || ''), // Use actual instructions
+        instructions: recipeDetails.instructions || '',
+        image: recipeDetails.image,
+        readyInMinutes: recipeDetails.readyInMinutes || 30, // Use actual preparation time
+      };
+      console.log('Saved recipe object before saving', savedRecipe);
+      // Navigate to the Recipe screen with the transformed object
+      navigation.navigate('Recipe', { recipeId: recipeDetails.id, recipe: savedRecipe });
+    } catch (error) {
+      console.error('Error fetching recipe details:', error);
+    }
   };
 
   const renderRecipeItem = ({ item }: { item: Recipe }) => (
@@ -76,7 +96,7 @@ const FindRecipeScreenTs: React.FC = () => {
       </Text>
       <TouchableOpacity
         style={styles.viewRecipeButton}
-        onPress={() => handleViewRecipe(item.id)}
+        onPress={() => handleViewRecipe(item.id, item)}
       >
         <Text style={styles.viewRecipeButtonText}>View Recipe</Text>
       </TouchableOpacity>
@@ -85,86 +105,86 @@ const FindRecipeScreenTs: React.FC = () => {
 
   return (
     <ImageBackground2>
-    <View style={styles.container}>
-      <Text style={styles.title}>Find a Recipe!</Text>
-      <Text style={styles.subtitle}>Enter ingredients:</Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>Find a Recipe!</Text>
+        <Text style={styles.subtitle}>Enter ingredients:</Text>
 
-      {/* Ingredient Inputs */}
-      {ingredients.map((ingredient, index) => (
-        <View key={index} style={styles.ingredientRow}>
-          <TextInput
-            style={styles.input}
-            placeholder={`Ingredient ${index + 1}`}
-            placeholderTextColor="#888"
-            value={ingredient}
-            onChangeText={(text) => handleIngredientChange(text, index)}
-          />
-          {ingredients.length > 1 && (
-            <TouchableOpacity
-              style={styles.removeButton}
-              onPress={() => removeIngredient(index)}
-            >
-              <Text style={styles.removeButtonText}>X</Text>
-            </TouchableOpacity>
-          )}
+        {/* Ingredient Inputs */}
+        {ingredients.map((ingredient, index) => (
+          <View key={index} style={styles.ingredientRow}>
+            <TextInput
+              style={styles.input}
+              placeholder={`Ingredient ${index + 1}`}
+              placeholderTextColor="#888"
+              value={ingredient}
+              onChangeText={(text) => handleIngredientChange(text, index)}
+            />
+            {ingredients.length > 1 && (
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => removeIngredient(index)}
+              >
+                <Text style={styles.removeButtonText}>X</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        ))}
+
+        {/* Add Ingredient Button */}
+        {ingredients.length < 10 && (
+          <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
+            <Text style={styles.addButtonText}>+ Add Ingredient</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Search Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.searchButton, { backgroundColor: '#FF6F61' }]} // Coral color
+            onPress={handleFetchRecipes}
+            disabled={loading}
+          >
+            <Text style={styles.searchButtonText}>Search for Recipes</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.searchButton, { backgroundColor: '#6B5B95' }]} // Purple color
+            onPress={handleFetchRecipesOnlyIngredients}
+            disabled={loading}
+          >
+            <Text style={styles.searchButtonText}>Search (Only Ingredients)</Text>
+          </TouchableOpacity>
         </View>
-      ))}
 
-      {/* Add Ingredient Button */}
-      {ingredients.length < 10 && (
-        <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
-          <Text style={styles.addButtonText}>+ Add Ingredient</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Search Buttons */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.searchButton, { backgroundColor: '#FF6F61' }]} // Coral color
-          onPress={handleFetchRecipes}
-          disabled={loading}
-        >
-          <Text style={styles.searchButtonText}>Search for Recipes</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.searchButton, { backgroundColor: '#6B5B95' }]} // Purple color
-          onPress={handleFetchRecipesOnlyIngredients}
-          disabled={loading}
-        >
-          <Text style={styles.searchButtonText}>Search (Only Ingredients)</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Loading and Error States */}
-      {loading ? (
-        <ActivityIndicator size="large" color="#6B5B95" style={styles.loader} />
-      ) : error ? (
-        <Text style={styles.errorText}>Error: {error}</Text>
-      ) : (
-        <FlatList
-          data={recipes}
-          renderItem={renderRecipeItem}
-          keyExtractor={(item) => item.id.toString()}
-          style={styles.recipeList}
-        />
-      )}
-
-      {/* Optional: Display results from the second search */}
-      {recipesOnlyIngredients.length > 0 && (
-        <>
-          <Text style={styles.subtitle}>Recipes with Only Ingredients:</Text>
+        {/* Loading and Error States */}
+        {loading ? (
+          <ActivityIndicator size="large" color="#6B5B95" style={styles.loader} />
+        ) : error ? (
+          <Text style={styles.errorText}>Error: {error}</Text>
+        ) : (
           <FlatList
-            data={recipesOnlyIngredients}
+            data={recipes}
             renderItem={renderRecipeItem}
             keyExtractor={(item) => item.id.toString()}
             style={styles.recipeList}
           />
-        </>
-      )}
-    </View>
-  </ImageBackground2>
-);
+        )}
+
+        {/* Optional: Display results from the second search */}
+        {recipesOnlyIngredients.length > 0 && (
+          <>
+            <Text style={styles.subtitle}>Recipes with Only Ingredients:</Text>
+            <FlatList
+              data={recipesOnlyIngredients}
+              renderItem={renderRecipeItem}
+              keyExtractor={(item) => item.id.toString()}
+              style={styles.recipeList}
+            />
+          </>
+        )}
+      </View>
+    </ImageBackground2>
+  );
 };
 
 // Styles remain the same as before

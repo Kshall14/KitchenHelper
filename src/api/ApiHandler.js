@@ -13,7 +13,7 @@ export const findRecipesByIngredients = async (ingredients, number = 15) => {
       }
   
       const data = await response.json();
-      console.log('API Response Data:', JSON.stringify(data, null, 2));
+      //console.log('API Response Data:', JSON.stringify(data, null, 2));
       return data;
     } catch (error) {
       console.error('Error fetching recipes by ingredients:', error);
@@ -30,7 +30,7 @@ export const findRecipesByIngredients = async (ingredients, number = 15) => {
       }
   
       const data = await response.json();
-      console.log('API Response Data (Only Ingredients):', JSON.stringify(data, null, 2));
+      //console.log('API Response Data (Only Ingredients):', JSON.stringify(data, null, 2));
       return data.results; // Assuming the API returns results in a "results" property
     } catch (error) {
       console.error('Error fetching recipes by only ingredients:', error);
@@ -47,7 +47,7 @@ export const findRecipesByIngredients = async (ingredients, number = 15) => {
       }
   
       const data = await response.json();
-      console.log('Recipe Information:', JSON.stringify(data, null, 2));
+      console.log('Recipe Information from api helper:', JSON.stringify(data, null, 2));
       return data;
     } catch (error) {
       console.error('Error fetching recipe information:', error);

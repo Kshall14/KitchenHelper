@@ -1,26 +1,34 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SavedRecipe } from '../../components/Types';
+import { SavedRecipe } from '../../components/Types'; // Import the SavedRecipe type
 
-const initialState: SavedRecipe[] = [];
+interface SavedRecipesState {
+  savedRecipes: SavedRecipe[];
+}
+
+const initialState: SavedRecipesState = {
+  savedRecipes: [],
+};
 
 const savedRecipesSlice = createSlice({
   name: 'savedRecipes',
   initialState,
   reducers: {
-    addSavedRecipe(state: SavedRecipe[], action: PayloadAction<SavedRecipe>) {
-      state.push(action.payload);
+    // Action to load saved recipes into the state
+    loadSavedRecipes: (state, action: PayloadAction<SavedRecipe[]>) => {
+      state.savedRecipes = action.payload;
     },
-    removeSavedRecipe(state: SavedRecipe[], action: PayloadAction<number>) {
-      return state.filter((recipe: SavedRecipe) => recipe.id !== action.payload);
+    // Action to add a new recipe to the saved recipes
+    addSavedRecipe: (state, action: PayloadAction<SavedRecipe>) => {
+      state.savedRecipes.push(action.payload);
     },
-    loadSavedRecipes(state: SavedRecipe[], action: PayloadAction<SavedRecipe[]>) {
-      return action.payload; // Replace the state with the loaded recipes
-    },
-    replaceSavedRecipes(state: SavedRecipe[], action: PayloadAction<SavedRecipe[]>) {
-      return action.payload; // Replace the entire list of saved recipes
+    // Action to remove a recipe from the saved recipes
+    removeSavedRecipe: (state, action: PayloadAction<number>) => {
+      state.savedRecipes = state.savedRecipes.filter(
+        (recipe) => recipe.spoonacularId !== action.payload
+      );
     },
   },
 });
 
-export const { addSavedRecipe, removeSavedRecipe, loadSavedRecipes, replaceSavedRecipes } = savedRecipesSlice.actions;
+export const { loadSavedRecipes, addSavedRecipe, removeSavedRecipe } = savedRecipesSlice.actions;
 export default savedRecipesSlice.reducer;

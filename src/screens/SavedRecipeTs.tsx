@@ -1,19 +1,58 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList, Image, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/Store';
 import ImageBackground2 from '../components/ImageBackground2';
-import { SavedRecipe } from '../components/Types'; // Import from the combined Types.ts
-import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../components/Types'; // Import from the combined Types.ts
+import { SavedRecipe } from '../components/Types';
+import { useNavigation,useFocusEffect } from '@react-navigation/native';
+import { RootStackParamList } from '../components/Types';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { loadSavedRecipes } from '../redux/slices/savedRecipesSlice';
+import { fetchSavedRecipes } from '../waterMelonDB/helpers';
 
 const SavedRecipesScreenTs = () => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SavedRecipe'>>(); 
-  const savedRecipes = useSelector((state: RootState) => state.savedRecipes);
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SavedRecipe'>>();
+  const dispatch = useDispatch();
+  
+  // Access saved recipes from the Redux store
+  const savedRecipes = useSelector((state: RootState) => state.savedRecipes.savedRecipes);
 
+  // Load saved recipes when the component mounts
+  // useEffect(() => {
+  //   const loadRecipes = async () => {
+  //     try {
+  //       const savedRecipes = await fetchSavedRecipes();
+  //       //console.log('Fetched recipes:', savedRecipes); // Debugging log
+  //       dispatch(loadSavedRecipes(savedRecipes));
+  //     } catch (err) {
+  //       console.error('Failed to load saved recipes:', err);
+  //     }
+  //   };
+
+  //   loadRecipes();
+  // }, [dispatch]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadRecipes = async () => {
+        try {
+          const savedRecipes = await fetchSavedRecipes();
+          dispatch(loadSavedRecipes(savedRecipes));
+        } catch (err) {
+          console.error('Failed to load saved recipes:', err);
+        }
+      };
+  
+      loadRecipes();
+  
+      // Optionally, you can return a cleanup function if needed
+      return () => {
+        // Cleanup logic (if any)
+      };
+    }, [dispatch])
+  );
+  // Navigate to the ViewRecipeScreen when a recipe is clicked
   const handleViewRecipe = (recipe: SavedRecipe) => {
-    navigation.navigate('Recipe', { recipeId: recipe.id, recipe }); // Pass both recipeId and recipe
+    navigation.navigate('Recipe', { recipeId: recipe.spoonacularId, recipe });
   };
 
   return (
@@ -25,17 +64,20 @@ const SavedRecipesScreenTs = () => {
         ) : (
           <FlatList
             data={savedRecipes}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.recipeCard}
-                onPress={() => handleViewRecipe(item)}
-              >
-                <Image source={{ uri: item.image }} style={styles.recipeImage} />
-                <Text style={styles.recipeTitle}>{item.title}</Text>
-                <Text style={styles.recipeTime}>Ready in {item.readyInMinutes} minutes</Text>
-              </TouchableOpacity>
-            )}
+            keyExtractor={(item) => item.spoonacularId.toString()}
+            renderItem={({ item }) => {
+              //console.log('Rendering item:', item); // Debugging log
+              return (
+                <TouchableOpacity
+                  style={styles.recipeCard}
+                  onPress={() => handleViewRecipe(item)}
+                >
+                  <Image source={{ uri: item.image }} style={styles.recipeImage} />
+                  <Text style={styles.recipeTitle}>{item.title}</Text>
+                  <Text style={styles.recipeTime}>Ready in {item.readyInMinutes} minutes</Text>
+                </TouchableOpacity>
+              );
+            }}
           />
         )}
       </View>
@@ -43,6 +85,7 @@ const SavedRecipesScreenTs = () => {
   );
 };
 
+// Styles remain the same
 const styles = StyleSheet.create({
   container: {
     padding: 16,

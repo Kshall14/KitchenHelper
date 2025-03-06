@@ -12,6 +12,7 @@
 		5CD9FC8DD9CCDF61FD8ADB7E /* Pods_KitchenApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 659F3489AF18E719680E4D76 /* Pods_KitchenApp.framework */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		DF63123A2D79EBBD00EFCA80 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = DF6312392D79EBA700EFCA80 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		659F3489AF18E719680E4D76 /* Pods_KitchenApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KitchenApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = KitchenApp/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = KitchenApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		DF6312392D79EBA700EFCA80 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -32,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF63123A2D79EBBD00EFCA80 /* libsqlite3.tbd in Frameworks */,
 				5CD9FC8DD9CCDF61FD8ADB7E /* Pods_KitchenApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -54,6 +57,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DF6312392D79EBA700EFCA80 /* libsqlite3.tbd */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				659F3489AF18E719680E4D76 /* Pods_KitchenApp.framework */,
 			);

@@ -1,4 +1,3 @@
-// src/screens/RandomRecipesScreenTs.tsx
 import React, { useEffect } from 'react';
 import {
   View,
@@ -16,6 +15,8 @@ import { RootStackParamList } from '../components/Types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { fetchRandomRecipesRequest } from '../redux/slices/randomRecipeSlice';
 import { RootState } from '../redux/store';
+import { Recipe, SavedRecipe } from '../components/Types';
+import { getRecipeInformation } from '../api/ApiHandler'; // Import the API helper
 
 const RandomRecipesScreenTs: React.FC = () => {
   const dispatch = useDispatch();
@@ -29,8 +30,29 @@ const RandomRecipesScreenTs: React.FC = () => {
     dispatch(fetchRandomRecipesRequest()); // Fetch random recipes on component mount
   }, []);
 
-  const handleViewRecipe = (recipeId: number) => {
-    navigation.navigate('Recipe', { recipeId });
+  const handleViewRecipe = async (recipeId: number, recipe: Recipe) => {
+    try {
+      // Fetch full recipe details using the API helper
+      const recipeDetails = await getRecipeInformation(recipeId);
+      console.log('Recipe details from API:', recipeDetails);
+
+      // Transform the Recipe object into a SavedRecipe object
+      const savedRecipe: SavedRecipe = {
+        spoonacularId: recipeDetails.id, // Use the ID from the detailed response
+        title: recipeDetails.title,
+        ingredients: recipeDetails.extendedIngredients || [], // Use actual ingredients
+        instructions: recipeDetails.instructions || '', // Use actual instructions
+        image: recipeDetails.image,
+        readyInMinutes: recipeDetails.readyInMinutes || 30, // Use actual preparation time
+      };
+
+      console.log('Saved recipe object before saving', savedRecipe);
+
+      // Navigate to the Recipe screen with the transformed object
+      navigation.navigate('Recipe', { recipeId: recipeDetails.id, recipe: savedRecipe });
+    } catch (error) {
+      console.error('Error fetching recipe details:', error);
+    }
   };
 
   const handleRefresh = () => {
@@ -80,7 +102,7 @@ const RandomRecipesScreenTs: React.FC = () => {
             <Text style={styles.heroTime}>{recipeOfTheDay.readyInMinutes} minutes</Text>
             <TouchableOpacity
               style={styles.heroButton}
-              onPress={() => handleViewRecipe(recipeOfTheDay.id)}
+              onPress={() => handleViewRecipe(recipeOfTheDay.id, recipeOfTheDay)} // Pass the full recipe object
             >
               <Text style={styles.heroButtonText}>View Recipe</Text>
             </TouchableOpacity>
@@ -100,7 +122,7 @@ const RandomRecipesScreenTs: React.FC = () => {
                 <Text style={styles.recipeTime}>{item.readyInMinutes} minutes</Text>
                 <TouchableOpacity
                   style={styles.viewRecipeButton}
-                  onPress={() => handleViewRecipe(item.id)}
+                  onPress={() => handleViewRecipe(item.id, item)} // Pass the full recipe object
                 >
                   <Text style={styles.viewRecipeButtonText}>View Recipe</Text>
                 </TouchableOpacity>
@@ -120,6 +142,7 @@ const RandomRecipesScreenTs: React.FC = () => {
   );
 };
 
+// Styles remain the same as before
 const styles = StyleSheet.create({
   container: {
     flex: 1,
